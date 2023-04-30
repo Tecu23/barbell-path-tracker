@@ -7,9 +7,28 @@
 
 import cv2
 
-FILE_PATH = "videos/05ikh6m6jvwa1-DASH_360.mp4"  # INPUT VIDEO PATH
-OUTPUT_PATH = "output/test.mp4"
 
+FILE_PATH = "videos/4d00oyrad2wa1-DASH_360.mp4"  # INPUT VIDEO PATH
+OUTPUT_PATH = "output/test.mp4"
+TRACKING_ALGORITHMS = ["BOOSTING", "MIL", "KCF", "TLD", "MEDIANFLOW", "MOSSE", "CSRT"]
+
+def initiate_tracker(tracker_type):
+    if tracker_type == 'BOOSTING':
+        tracker = cv2.legacy.TrackerBoosting_create()
+    elif tracker_type == 'MIL':
+        tracker = cv2.TrackerMIL_create()
+    elif tracker_type == 'KCF':
+        tracker = cv2.legacy.TrackerKCF_create()
+    elif tracker_type == 'TLD':
+        tracker = cv2.legacy.TrackerTLD_create()
+    elif tracker_type == 'MEDIANFLOW':
+        tracker = cv2.legacy.TrackerMedianFlow_create()
+    elif tracker_type == "MOSSE":
+        tracker = cv2.legacy.TrackerMOSSE_create()
+    elif tracker_type == "CSRT":
+        tracker = cv2.TrackerCSRT_create()
+
+    return tracker
 
 def createVideoWriter(video):
     # get size of the original video in otder to make output video same size
@@ -25,7 +44,8 @@ def createVideoWriter(video):
 def main():
     cap = cv2.VideoCapture(FILE_PATH)
 
-    tracker = cv2.legacy.TrackerKCF_create()
+    # tracker = cv2.legacy.TrackerKCF_create()
+    tracker = initiate_tracker("CSRT")
 
     videoWriter = createVideoWriter(cap)
 
@@ -94,8 +114,9 @@ def main():
             # KEY IS "q"
             key = cv2.waitKey(5) & 0xFF
             if key == ord("q"):
-                break
-
+               break
+        else:
+            print("Fail")
     cap.release()
 
     cv2.destroyAllWindows()

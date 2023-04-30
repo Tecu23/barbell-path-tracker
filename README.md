@@ -20,6 +20,20 @@ Project made to detect and track barbell path from video upload. Useful for powe
 ### [cluffa/BarTracking](https://github.com/cluffa/BarTracking)
 ### [willgrnt/opencv-bar-tracker](https://github.com/wllgrnt/opencv-bar-tracker)
 
+## DETECTION
+
+- using TensorFlow Object Detection API
+
+Steps:
+
+1. Setup:
+
+### Detection Dataset
+
+https://universe.roboflow.com/babell-tracking/barbel-tracking-za7nr/dataset/5
+
+
+
 
 ### Useful Commands
 `
