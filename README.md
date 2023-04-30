@@ -25,3 +25,7 @@ Project made to detect and track barbell path from video upload. Useful for powe
 `
 python -m  pipreqs.pipreqs
 `
+
+`
+chmod +x extract_videos.py
+`
