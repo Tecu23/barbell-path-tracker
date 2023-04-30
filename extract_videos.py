@@ -3,14 +3,14 @@ from redvid import Downloader
 
 
 # Contants
-OUTPUT_PATH = '/videos/'
+OUTPUT_PATH = 'videos'
 
 
 # extracts video to '/videos'
 def extract_video(reddit_link):
     reddit = Downloader()
     reddit.max_s = 5 * (1 << 20) # 5 MB
-    reddit.path = "videos"
+    reddit.path = OUTPUT_PATH
     reddit.url = reddit_link
 
     reddit.download()
