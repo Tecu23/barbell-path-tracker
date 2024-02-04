@@ -6,22 +6,25 @@
 """
 
 import cv2
+import torch
+import numpy as np
 
 
-FILE_PATH = "videos/4d00oyrad2wa1-DASH_360.mp4"  # INPUT VIDEO PATH
+FILE_PATH = "input.mp4.mp4"  # INPUT VIDEO PATH
 OUTPUT_PATH = "output/test.mp4"
 TRACKING_ALGORITHMS = ["BOOSTING", "MIL", "KCF", "TLD", "MEDIANFLOW", "MOSSE", "CSRT"]
 
+
 def initiate_tracker(tracker_type):
-    if tracker_type == 'BOOSTING':
+    if tracker_type == "BOOSTING":
         tracker = cv2.legacy.TrackerBoosting_create()
-    elif tracker_type == 'MIL':
+    elif tracker_type == "MIL":
         tracker = cv2.TrackerMIL_create()
-    elif tracker_type == 'KCF':
+    elif tracker_type == "KCF":
         tracker = cv2.legacy.TrackerKCF_create()
-    elif tracker_type == 'TLD':
+    elif tracker_type == "TLD":
         tracker = cv2.legacy.TrackerTLD_create()
-    elif tracker_type == 'MEDIANFLOW':
+    elif tracker_type == "MEDIANFLOW":
         tracker = cv2.legacy.TrackerMedianFlow_create()
     elif tracker_type == "MOSSE":
         tracker = cv2.legacy.TrackerMOSSE_create()
@@ -29,6 +32,18 @@ def initiate_tracker(tracker_type):
         tracker = cv2.TrackerCSRT_create()
 
     return tracker
+
+
+def load_model():
+    model = torch.hub.load(
+        "ultralytics/yolov5",
+        "custom",
+        path="model/best.pt",
+        force_reload=True,
+    )
+
+    return model
+
 
 def createVideoWriter(video):
     # get size of the original video in otder to make output video same size
@@ -44,8 +59,7 @@ def createVideoWriter(video):
 def main():
     cap = cv2.VideoCapture(FILE_PATH)
 
-    # tracker = cv2.legacy.TrackerKCF_create()
-    tracker = initiate_tracker("CSRT")
+    tracker = initiate_tracker("KCF")
 
     videoWriter = createVideoWriter(cap)
 
@@ -54,9 +68,19 @@ def main():
 
     ret, frame = cap.read()
 
-    cv2.imshow("Frame", frame)
+    model = load_model()
 
-    boundingBox = cv2.selectROI("Frame", frame)
+    results = model(frame)
+
+    box = tuple(torch.round(results.xyxy[0][0][0:4]).tolist())
+
+    boundingBox = (
+        int(box[0]),
+        int(box[1]),
+        int(box[2]) - int(box[0]),
+        int(box[3]) - int(box[1]),
+    )
+    # boundingBox = cv2.selectROI("Frame", frame)
 
     try:
         tracker.init(frame, boundingBox)
@@ -114,7 +138,7 @@ def main():
             # KEY IS "q"
             key = cv2.waitKey(5) & 0xFF
             if key == ord("q"):
-               break
+                break
         else:
             print("Fail")
     cap.release()

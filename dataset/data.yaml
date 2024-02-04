@@ -1,0 +1,13 @@
+train: ../dataset/train/images
+val: ../dataset/valid/images
+test: ../dataset/test/images
+
+nc: 1
+names: ["Barbell"]
+
+roboflow:
+  workspace: babell-tracking
+  project: barbel-tracking-za7nr
+  version: 5
+  license: CC BY 4.0
+  url: https://universe.roboflow.com/babell-tracking/barbel-tracking-za7nr/dataset/5
