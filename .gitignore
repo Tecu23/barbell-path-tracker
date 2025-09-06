@@ -1,1 +1,7 @@
-/yolov5
+yolov5s.pt
+
+test/output/
+
+train/output/
+
+model/
