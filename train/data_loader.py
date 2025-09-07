@@ -5,10 +5,9 @@ import numpy as np
 
 
 class DataLoader:
-    def __init__(self, dataset_path, input_size=(128, 128)):
+    def __init__(self, dataset_path, input_size=(256, 256)):  # Updated default size
         self.dataset_path = Path(dataset_path)
         self.input_size = input_size
-
         # Define paths
         self.train_images = self.dataset_path / "train" / "images"
         self.train_labels = self.dataset_path / "train" / "labels"
@@ -34,18 +33,19 @@ class DataLoader:
             y_center = float(parts[2])
             width = float(parts[3])
             height = float(parts[4])
-
             return [x_center, y_center, width, height], 1.0
 
         return [0, 0, 0, 0], 0.0
 
     def load_image(self, image_path):
-        """Load and preprocess image"""
+        """Load and preprocess image from 416x416 to target size"""
         img = cv2.imread(str(image_path))
         if img is None:
             raise ValueError(f"Could not load image: {image_path}")
 
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+
+        # Resize from 416x416 (or any size) to target input_size
         img_resized = cv2.resize(img, self.input_size, interpolation=cv2.INTER_LINEAR)
         img_normalized = img_resized.astype(np.float32) / 255.0
 
@@ -75,10 +75,10 @@ class DataLoader:
 
         for img_path in image_files:
             try:
-                # Load image
+                # Load and resize image from 416x416 to 256x256
                 img = self.load_image(img_path)
 
-                # Load corresponding label
+                # Load corresponding label (YOLO format is normalized, so no changes needed)
                 label_path = labels_dir / f"{img_path.stem}.txt"
                 bbox, conf = self.parse_yolo_label(label_path)
 
