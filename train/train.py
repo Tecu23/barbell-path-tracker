@@ -4,7 +4,7 @@ import tensorflow as tf
 from data_loader import DataLoader
 
 
-def create_barbell_model(input_size=(256, 256, 3)):
+def create_barbell_model(input_size=(312, 312, 3)):
     """Create MobileNetV3-Small based barbell detector"""
 
     # Base model
@@ -22,7 +22,7 @@ def create_barbell_model(input_size=(256, 256, 3)):
     # Custom detection head
     x = base_model.output
     x = tf.keras.layers.GlobalAveragePooling2D()(x)
-    x = tf.keras.layers.Dense(256, activation="relu")(x)
+    x = tf.keras.layers.Dense(312, activation="relu")(x)
     x = tf.keras.layers.Dropout(0.3)(x)
     x = tf.keras.layers.Dense(64, activation="relu")(x)
     x = tf.keras.layers.Dropout(0.2)(x)
@@ -64,7 +64,7 @@ def train_barbell_detector(dataset_path, epochs=80, batch_size=32, learning_rate
     """Main training function"""
 
     print("Loading dataset...")
-    data_loader = DataLoader(dataset_path, input_size=(256, 256))
+    data_loader = DataLoader(dataset_path, input_size=(312, 312))
 
     # Load training and validation data
     X_train, bbox_train, conf_train = data_loader.load_dataset("train")
@@ -164,7 +164,7 @@ def plot_training_history(history):
     axes[1, 0].set_title("Bounding Box Loss")
     axes[1, 0].set_xlabel("Epoch")
     axes[1, 0].set_ylabel("Loss")
-    axes[1, 0].legend()
+    axes[1]()
 
     # Confidence loss
     axes[1, 1].plot(
@@ -189,8 +189,8 @@ if __name__ == "__main__":
     DATASET_PATH = "./dataset"
 
     # Training configuration
-    EPOCHS = 50
-    BATCH_SIZE = 8
+    EPOCHS = 80
+    BATCH_SIZE = 16
     LEARNING_RATE = 0.001
 
     gpus = tf.config.experimental.list_physical_devices("GPU")

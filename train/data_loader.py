@@ -5,7 +5,7 @@ import numpy as np
 
 
 class DataLoader:
-    def __init__(self, dataset_path, input_size=(256, 256)):  # Updated default size
+    def __init__(self, dataset_path, input_size=(312, 312)):  # Updated default size
         self.dataset_path = Path(dataset_path)
         self.input_size = input_size
         # Define paths

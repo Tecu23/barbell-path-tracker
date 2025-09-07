@@ -8,7 +8,7 @@ import tensorflow as tf
 
 
 class BarbellModelTester:
-    def __init__(self, model_path, input_size=(256, 256)):
+    def __init__(self, model_path, input_size=(312, 312)):
         """Initialize the model tester"""
         self.model_path = model_path
         self.input_size = input_size
@@ -735,7 +735,7 @@ def main():
     """Example usage of the BarbellModelTester"""
 
     # Initialize tester with your trained model
-    MODEL_PATH = "model/barbell_detector_model.h5"  # or "barbell_detector_final.h5"
+    MODEL_PATH = "model/barbell_detector_model_v1.h5"  # or "barbell_detector_final.h5"
     DATASET_PATH = "dataset"
 
     try:

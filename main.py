@@ -1,37 +1,50 @@
 """
-    Steps:
-        1. Search reddit for different photos and videos of people doing squats for data modelling.
-        2. Detection algorithm.
-        3. Tracking algorithm.
+Steps:
+    1. Search reddit for different photos and videos of people doing squats for data modelling.
+    2. Detection algorithm.
+    3. Tracking algorithm.
 """
 
 import cv2
-import torch
 import numpy as np
+import torch
 
-
-FILE_PATH = "input.mp4.mp4"  # INPUT VIDEO PATH
+FILE_PATH = "input.mp4"  # INPUT VIDEO PATH
 OUTPUT_PATH = "output/test.mp4"
 TRACKING_ALGORITHMS = ["BOOSTING", "MIL", "KCF", "TLD", "MEDIANFLOW", "MOSSE", "CSRT"]
 
 
 def initiate_tracker(tracker_type):
-    if tracker_type == "BOOSTING":
-        tracker = cv2.legacy.TrackerBoosting_create()
-    elif tracker_type == "MIL":
-        tracker = cv2.TrackerMIL_create()
-    elif tracker_type == "KCF":
-        tracker = cv2.legacy.TrackerKCF_create()
-    elif tracker_type == "TLD":
-        tracker = cv2.legacy.TrackerTLD_create()
-    elif tracker_type == "MEDIANFLOW":
-        tracker = cv2.legacy.TrackerMedianFlow_create()
-    elif tracker_type == "MOSSE":
-        tracker = cv2.legacy.TrackerMOSSE_create()
-    elif tracker_type == "CSRT":
-        tracker = cv2.TrackerCSRT_create()
+    try:
+        if tracker_type == "BOOSTING":
+            tracker = cv2.legacy.TrackerBoosting_create()
+        elif tracker_type == "MIL":
+            tracker = cv2.TrackerMIL_create()
+        elif tracker_type == "KCF":
+            tracker = cv2.legacy.TrackerKCF_create()
+        elif tracker_type == "TLD":
+            tracker = cv2.legacy.TrackerTLD_create()
+        elif tracker_type == "MEDIANFLOW":
+            tracker = cv2.legacy.TrackerMedianFlow_create()
+        elif tracker_type == "MOSSE":
+            tracker = cv2.legacy.TrackerMOSSE_create()
+        elif tracker_type == "CSRT":
+            tracker = cv2.TrackerCSRT_create()
+        else:
+            print(f"Unknown tracker type: {tracker_type}")
+            return None
 
-    return tracker
+        return tracker
+
+    except Exception as e:
+        print(f"Error creating tracker {tracker_type}: {e}")
+        # Fall back to CSRT which is usually available
+        try:
+            print("Falling back to CSRT tracker...")
+            return cv2.TrackerCSRT_create()
+        except Exception as e2:
+            print(f"Could not create fallback tracker: {e2}")
+            return None
 
 
 def load_model():
@@ -67,6 +80,12 @@ def main():
         print("Error opening video stream or file")
 
     ret, frame = cap.read()
+
+    # Add this check:
+    if not ret or frame is None:
+        print("Error: Could not read first frame from video")
+        cap.release()
+        return
 
     model = load_model()
 
